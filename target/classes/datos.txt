@@ -1,0 +1,10 @@
+Medicamento:FortiFlora:50000
+Medicamento:NextGard:90000
+Examen:Rayos-X:30000
+Examen:Perfil lipídico:25000
+Veterinario:Doc Fernandez:General:AZ234322
+Veterinario:Doc Angelica:General:AZ342543
+Propietario:726787:Sophie Germain:Cl 111 #1-1:sopger@gmail.com:3111111111
+Propietario:271828:Leonhard Euler:Cll 100 #2-2:euler@gmail.com:312222222
+Mascota:Firulais:Perro:Golden:30:Macho:20:40:726787:10-10-2022
+Mascota:Garfield:Gato:Persa:10:Hembra:20:40:888888:Si
