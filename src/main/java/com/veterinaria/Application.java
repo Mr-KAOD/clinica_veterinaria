@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -107,36 +106,296 @@ public class Application {
         return null;
     }
 
-    static void administrarDatosPrincipales(Scanner sc) {
+    static void administrarDatosPrincipales(Scanner scan) {
         System.out.println("\n1. Administrar Veterinarios");
         System.out.println("2. Administrar Medicamentos");
         System.out.println("3. Administrar Examenes");
         System.out.println("4. Volver");
-        int opcion = sc.nextInt(); sc.nextLine();
+        int opcion = scan.nextInt(); scan.nextLine();
         switch (opcion) {
-            case 1:
-                for (Veterinario v : veterinarios) {
-                    System.out.println("- " + v.getNombre());
-                }
-                break;
-            case 2:
-                System.out.print("Nombre medicamento: ");
-                String nomMed = sc.nextLine();
-                System.out.print("Costo: ");
-                double costoMed = sc.nextDouble();
-                medicamentos.add(new Medicamento(nomMed, costoMed));
-                break;
+            case 1 -> administrarVeterinarios(scan);
+            case 2 -> administrarMedicamentos(scan);
             case 3:
                 System.out.print("Nombre examen: ");
-                String nomEx = sc.nextLine();
+                String nomEx = scan.nextLine();
                 System.out.print("Costo: ");
-                double costoEx = sc.nextDouble();
+                double costoEx = scan.nextDouble();
                 examenes.add(new Examen(nomEx, costoEx));
                 break;
             default:
                 break;
         }
     }
+
+    static void administrarVeterinarios(Scanner scan) {
+
+        System.out.println("\n1. Listar");
+        System.out.println("2. Agregar");
+        System.out.println("3. Editar");
+        System.out.println("4. Borrar");
+        System.out.println("5. Salir");
+        System.out.print("Seleccione una opción: ");
+        int opcion = scan.nextInt();
+        scan.nextLine();
+
+        switch (opcion) {
+            case 1 -> // Listar
+                {
+                    for (Veterinario v : veterinarios) {
+                        System.out.println("- " + v.toString());
+                    }
+                }
+            case 2 -> // Agregar
+                {
+                    System.out.print("Escriba los datos del veterinario ");
+                    System.out.print("Nombre: ");
+                    String nombre = scan.nextLine();
+                    System.out.print("Especialidad: ");
+                    String especialidad = scan.nextLine();
+                    System.out.print("ID: ");
+                    String id = scan.nextLine();
+
+                    veterinarios.add(new Veterinario( nombre, especialidad, id));
+                }
+            case 3 -> // Editar
+                {
+                    System.out.print("Ingrese el registro del vetrinario que desea editar: ");                    
+                    String veterinarioAEditadar = scan.nextLine();
+
+                    boolean encontrado = false;
+
+                    for (Veterinario v: veterinarios) {
+                        if (v.getId().equals(veterinarioAEditadar)) {
+                            System.out.println("Ingrese los nuevos datos");
+                            System.out.print("Nombre: ");
+                            String nombreEditado = scan.nextLine();
+                            System.out.print("Esspecialidad: ");
+                            String especialidadEditada = scan.nextLine();
+
+                            v.setNombre(nombreEditado);
+                            v.setEspecialidad(especialidadEditada);
+
+                            encontrado = true;
+                            break;
+                        }
+
+                        if (!encontrado) {
+                            System.out.println("No se encontró un veterinario con ese id");
+                        }
+                    }
+                }
+            case 4 -> // Borrar
+                {
+                    System.out.print("Ingrese el ID del vetrinario que desea borrar: ");                    
+                    String veterinarioABorrar = scan.nextLine();
+
+                    boolean encontrado = false;
+
+                    for (int i = 0; i < veterinarios.size(); i++) {
+                        Veterinario veterinarioSeleccionado = veterinarios.get(i);
+                        if (veterinarioSeleccionado.getId().equals(veterinarioABorrar)) {
+                            System.out.println("Vetrinario seleccionado: ");
+                            System.out.println(veterinarioSeleccionado.toString());
+                            System.out.print("Desea borrar este registro (Si/No): ");
+                            String borrar = scan.nextLine();
+
+                            if (borrar.equalsIgnoreCase("si")) {
+                                veterinarios.remove(i);
+                                System.out.println("Registro eliminado exitosamente.");
+                            } else {
+                                System.out.println("Operación cancelada.");
+                            }
+
+                            encontrado = true;
+                            break;
+                        }
+
+                        if (!encontrado) {
+                            System.out.println("No se encontró un veterinario con ese id");
+                        }
+                    }
+                    
+                }
+            default -> System.out.println("Saliendo...");
+        }
+    }
+
+
+    static void administrarMedicamentos(Scanner scan) {
+        System.out.println("\n1. Listar");
+        System.out.println("2. Agregar");
+        System.out.println("3. Editar");
+        System.out.println("4. Borrar");
+        System.out.println("5. Salir");
+        System.out.print("Seleccione una opción: ");
+        int opcion = scan.nextInt();
+        scan.nextLine();
+
+        switch (opcion) {
+            case 1 -> // Listar
+                {
+                    for (Medicamento m: medicamentos) {
+                        System.out.println("-> " + m.toString());
+                    }
+                }
+            case 2 -> // Agregar
+                {
+                    System.out.print("Nombre medicamento: ");
+                    String nombreMedicamento = scan.nextLine();
+                    System.out.print("Costo: ");
+                    double costoMedicamento = scan.nextDouble();
+                    medicamentos.add(new Medicamento(nombreMedicamento, costoMedicamento));
+                }
+            case 3 -> // Editar
+                {
+                    System.out.print("Ingrese el medicamento que desea editar: ");
+                    String medicamentoAEditar = scan.nextLine();
+
+                    boolean encontrado = false;
+
+                    for (Medicamento m : medicamentos) {
+                        if(m.getNombre().equals(medicamentoAEditar)) {
+                            System.out.println("Ingrese los nuevos datos");
+                            System.out.print("Nombre: ");
+                            String nombreEditado = scan.nextLine();
+                            System.out.print("Costo: ");
+                            double costoEditado = scan.nextDouble();
+
+                            m.setNombre(nombreEditado);
+                            m.setCosto(costoEditado);
+
+                            encontrado = true;
+                            break;
+                        }
+                    }
+
+                    if (!encontrado) {
+                        System.out.println("No se encontró un medicamento por ese nombre.");
+                    }
+                }
+            case 4 -> // Borrar
+                {
+                    System.out.print("Ingrese el nombre del medicamento que desea borrar: ");
+                    String medicamentoABorrar = scan.nextLine();
+
+                    boolean encontrado = false;
+
+                    for (int i = 0; i < medicamentos.size(); i++) {
+                        Medicamento medicamentoSeleccionado = medicamentos.get(i);
+
+                        if (medicamentoSeleccionado.getNombre().equalsIgnoreCase(medicamentoABorrar)) {
+                            System.out.print("Medicamento seleccionado: ");
+                            System.out.println(medicamentoSeleccionado.toString());
+                            System.out.print("Desea borrar este registro (Si/No): ");
+                            String borrar = scan.nextLine();
+
+                            if (borrar.equalsIgnoreCase(borrar)) {
+                                medicamentos.remove(i);
+                                System.out.println("Registro eliminado exitosamente.");
+                            } else {
+                                System.out.println("Operación cancelada.");
+                            }
+
+                            encontrado = true;
+                            break;
+                        }
+
+                        if (!encontrado) {
+                            System.out.println("No se encontró un medicamento por ese nombre.");
+                        }
+                    }
+                }
+            default -> System.out.println("Saliendo...");
+        }
+    }
+
+    static void administrarExamenes(Scanner scan) {
+        System.out.println("\n1. Listar");
+        System.out.println("2. Agregar");
+        System.out.println("3. Editar");
+        System.out.println("4. Borrar");
+        System.out.println("5. Salir");
+        System.out.print("Seleccione una opción: ");
+        int opcion = scan.nextInt();
+        scan.nextLine();
+
+        switch (opcion) {
+            case 1 -> // Listar
+                {
+                    for (Examen e : examenes) {
+                        System.out.println("-> " + e.toString());
+                    }
+                }
+            case 2 -> // Agregar
+                {
+                    System.out.print("Nombre examen: ");
+                    String nomEx = scan.nextLine();
+                    System.out.print("Costo: ");
+                    double costoEx = scan.nextDouble();
+                    examenes.add(new Examen(nomEx, costoEx));
+                }
+            case 3 -> // Editar
+                {
+                    System.out.print("Ingrese el nombre del examen que desea editar: ");                    
+                    String examenAEditadar = scan.nextLine();
+
+                    boolean encontrado = false;
+
+                    for (Examen e : examenes) {
+                        if (e.getNombre().equals(examenAEditadar)) {
+                            System.out.println("Ingrese los nuevos datos");
+                            System.out.print("Nombre: ");
+                            String nombreEditado = scan.nextLine();
+                            System.out.print("Costo: ");
+                            double costoEditado = scan.nextDouble();
+
+                            e.setNombre(nombreEditado);
+                            e.setCosto(costoEditado);
+
+                            encontrado = true;
+                            break;
+                        }
+
+                        if (!encontrado) {
+                            System.out.println("No se encontró un examen con ese nombre");
+                        }
+                    }
+                }
+            case 4 -> //borrar
+                {
+                    System.out.print("Ingrese el nombre del examen que desea borrar: ");                    
+                    String examenABorrar = scan.nextLine();
+
+                    boolean encontrado = false;
+
+                    for (int i = 0; i < examenes.size(); i++) {
+                        Examen examenSeleccionado = examenes.get(i);
+                        if (examenSeleccionado.getNombre().equals(examenABorrar)) {
+                            System.out.println("Examen seleccionado: ");
+                            System.out.println(examenSeleccionado.toString());
+                            System.out.print("Desea borrar este registro (Si/No): ");
+                            String borrar = scan.nextLine();
+
+                            if (borrar.equalsIgnoreCase("si")) {
+                                examenes.remove(i);
+                                System.out.println("Registro eliminado exitosamente.");
+                            } else {
+                                System.out.println("Operación cancelada.");
+                            }
+
+                            encontrado = true;
+                            break;
+                        }
+
+                        if (!encontrado) {
+                            System.out.println("No se encontró un examen con ese nombre");
+                        }
+                    }
+                }
+            default -> System.out.println("Saliendo...");
+        } 
+    }
+
 
     static void administrarConsulta(Scanner scan) {
         System.out.print("Nombre del veterinario: ");

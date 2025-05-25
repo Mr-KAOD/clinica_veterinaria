@@ -9,10 +9,25 @@ public class Medicamento {
         this.costo = costo;
     }
 
-    public double getCosto() {
-        return costo;
-    }
     public String getNombre() {
         return nombre;
     }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
+    public double getCosto() {
+        return costo;
+    }
+
+    public void setCosto(double costo) {
+        this.costo = costo;
+    }
+
+    @Override
+    public String toString() {
+        return "Medicamento [nombre=" + nombre + ", costo=" + costo + "]";
+    }
+
 }
