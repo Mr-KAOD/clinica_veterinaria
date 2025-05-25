@@ -13,16 +13,16 @@ import java.util.Scanner;
 
 public class Application {
 
-    static List<Veterinario> veterinarios = new ArrayList<>();
-    static List<Medicamento> medicamentos = new ArrayList<>();
-    static List<Examen> examenes = new ArrayList<>();
-    static List<Propietario> propietarios = new ArrayList<>();
-    static List<Mascota> mascotas = new ArrayList<>();
-    static List<Consulta> consultas = new ArrayList<>();
+    static ArrayList<Veterinario> veterinarios = new ArrayList<>();
+    static ArrayList<Medicamento> medicamentos = new ArrayList<>();
+    static ArrayList<Examen> examenes = new ArrayList<>();
+    static ArrayList<Propietario> propietarios = new ArrayList<>();
+    static ArrayList<Mascota> mascotas = new ArrayList<>();
+    static ArrayList<Consulta> consultas = new ArrayList<>();
 
     public static void main(String[] args) {
         cargarDatosDesdeArchivo("datos.txt");
-        Scanner sc = new Scanner(System.in);
+        Scanner scan = new Scanner(System.in);
         int opcion;
         do {
             System.out.println("\n1. Administrar Datos Principales");
@@ -30,14 +30,14 @@ public class Application {
             System.out.println("3. Reportes");
             System.out.println("4. Salir");
             System.out.print("Seleccione una opción: ");
-            opcion = sc.nextInt();
-            sc.nextLine();
+            opcion = scan.nextInt();
+            scan.nextLine();
             switch (opcion) {
                 case 1:
-                    administrarDatosPrincipales(sc);
+                    administrarDatosPrincipales(scan);
                     break;
                 case 2:
-                    administrarConsulta(sc);
+                    administrarConsulta(scan);
                     break;
                 case 3:
                     generarReportes();
@@ -49,39 +49,36 @@ public class Application {
                     System.out.println("Opción inválida");
             }
         } while (opcion != 4);
-        sc.close();
+        scan.close();
     }
 
     static void cargarDatosDesdeArchivo(String nombreArchivo) {
         try (BufferedReader br = new BufferedReader(new FileReader(nombreArchivo))) {
             String linea;
             while ((linea = br.readLine()) != null) {
-                String[] partes = linea.split(":");
-                switch (partes[0]) {
-                    case "Veterinario":
-                        veterinarios.add(new Veterinario(partes[1], partes[2], partes[3]));
-                        break;
-                    case "Medicamento":
-                        medicamentos.add(new Medicamento(partes[1], Double.parseDouble(partes[2])));
-                        break;
-                    case "Examen":
-                        examenes.add(new Examen(partes[1], Double.parseDouble(partes[2])));
-                        break;
-                    case "Propietario":
-                        propietarios.add(new Propietario(partes[1], partes[2], partes[3], partes[4], partes[5]));
-                        break;
-                    case "Mascota":
-                        String especie = partes[2];
-                        Propietario propietario = buscarPropietario(partes[8]);
-                        if (especie.equalsIgnoreCase("Perro")) {
-                            mascotas.add(new Perro(partes[1], partes[3], Integer.parseInt(partes[4]), partes[5],
-                                    Double.parseDouble(partes[6]), Double.parseDouble(partes[7]), propietario, partes[9]));
-                        } else if (especie.equalsIgnoreCase("Gato")) {
-                            mascotas.add(new Gato(partes[1], partes[3], Integer.parseInt(partes[4]), partes[5],
-                                    Double.parseDouble(partes[6]), Double.parseDouble(partes[7]), propietario,
-                                    partes[9].equalsIgnoreCase("Si")));
+                String[] partesLineaTexto = linea.split(":");
+                switch (partesLineaTexto[0]) {
+                    case "Veterinario" -> veterinarios.add(new Veterinario(partesLineaTexto[1], partesLineaTexto[2], partesLineaTexto[3]));
+
+                    case "Medicamento" -> medicamentos.add(new Medicamento(partesLineaTexto[1], Double.parseDouble(partesLineaTexto[2])));
+
+                    case "Examen" -> examenes.add(new Examen(partesLineaTexto[1], Double.parseDouble(partesLineaTexto[2])));
+
+                    case "Propietario" -> propietarios.add(new Propietario(partesLineaTexto[1], partesLineaTexto[2], partesLineaTexto[3], partesLineaTexto[4], partesLineaTexto[5]));
+                    
+                    case "Mascota" -> 
+                        {
+                            String especie = partesLineaTexto[2];
+                            Propietario propietario = buscarPropietario(partesLineaTexto[8]);
+                            if (especie.equalsIgnoreCase("Perro")) {
+                                mascotas.add(new Perro(partesLineaTexto[1], partesLineaTexto[3], Integer.parseInt(partesLineaTexto[4]), partesLineaTexto[5],
+                                        Double.parseDouble(partesLineaTexto[6]), Double.parseDouble(partesLineaTexto[7]), propietario, partesLineaTexto[9]));
+                            } else if (especie.equalsIgnoreCase("Gato")) {
+                                mascotas.add(new Gato(partesLineaTexto[1], partesLineaTexto[3], Integer.parseInt(partesLineaTexto[4]), partesLineaTexto[5],
+                                        Double.parseDouble(partesLineaTexto[6]), Double.parseDouble(partesLineaTexto[7]), propietario,
+                                        partesLineaTexto[9].equalsIgnoreCase("Si")));
+                            }
                         }
-                        break;
                 }
             }
         } catch (IOException e) {
@@ -111,9 +108,9 @@ public class Application {
     }
 
     static void administrarDatosPrincipales(Scanner sc) {
-        System.out.println("\n1. Listar Veterinarios");
-        System.out.println("2. Agregar Medicamento");
-        System.out.println("3. Agregar Examen");
+        System.out.println("\n1. Administrar Veterinarios");
+        System.out.println("2. Administrar Medicamentos");
+        System.out.println("3. Administrar Examenes");
         System.out.println("4. Volver");
         int opcion = sc.nextInt(); sc.nextLine();
         switch (opcion) {
@@ -141,29 +138,29 @@ public class Application {
         }
     }
 
-    static void administrarConsulta(Scanner sc) {
+    static void administrarConsulta(Scanner scan) {
         System.out.print("Nombre del veterinario: ");
-        Veterinario vet = buscarVeterinario(sc.nextLine());
+        Veterinario vet = buscarVeterinario(scan.nextLine());
         System.out.print("Nombre de la mascota: ");
-        Mascota mas = buscarMascota(sc.nextLine());
+        Mascota mas = buscarMascota(scan.nextLine());
         Consulta consulta = new Consulta(vet, mas, new Date());
 
         System.out.print("Ingrese diagnóstico: ");
-        String diag = sc.nextLine();
+        String diag = scan.nextLine();
         consulta.agregarDiagnostico(new Diagnostico(diag, new Date()));
 
         System.out.print("¿Agregar exámenes? (si/no): ");
-        if (sc.nextLine().equalsIgnoreCase("si")) {
+        if (scan.nextLine().equalsIgnoreCase("si")) {
             for (int i = 0; i < examenes.size(); i++) {
                 System.out.println((i + 1) + ". " + examenes.get(i).getCosto());
             }
             System.out.print("Seleccione examen: ");
-            int exSel = sc.nextInt(); sc.nextLine();
+            int exSel = scan.nextInt(); scan.nextLine();
             consulta.agregarExamen(examenes.get(exSel - 1));
         }
 
         System.out.print("¿Agregar tratamiento? (si/no): ");
-        if (sc.nextLine().equalsIgnoreCase("si")) {
+        if (scan.nextLine().equalsIgnoreCase("si")) {
             Tratamiento t = new Tratamiento();
             while (true) {
                 System.out.println("Lista de medicamentos:");
@@ -171,14 +168,14 @@ public class Application {
                     System.out.println((i + 1) + ". " + medicamentos.get(i).getNombre());
                 }
                 System.out.print("Seleccione número: ");
-                int medSel = sc.nextInt(); sc.nextLine();
+                int medSel = scan.nextInt(); scan.nextLine();
                 System.out.print("Frecuencia (4h/8h/12h/24h): ");
-                String frec = sc.nextLine();
+                String frec = scan.nextLine();
                 System.out.print("Cantidad (1/2/3 dosis): ");
-                String cant = sc.nextLine();
+                String cant = scan.nextLine();
                 t.agregarMedicamento(medicamentos.get(medSel - 1), new Dosis(frec, cant));
                 System.out.print("¿Agregar otro? (si/no): ");
-                if (!sc.nextLine().equalsIgnoreCase("si")) break;
+                if (!scan.nextLine().equalsIgnoreCase("si")) break;
             }
             consulta.agregarTratamiento(t);
         }
