@@ -168,30 +168,38 @@ public class Application {
                 {
                     System.out.print("Escriba los datos del veterinario ");
                     System.out.print("Nombre: ");
-                    String nombre = scan.nextLine();
+                    String nombre = normalizarTexto(scan.nextLine());
                     System.out.print("Especialidad: ");
-                    String especialidad = scan.nextLine();
+                    String especialidad = normalizarTexto(scan.nextLine());
                     System.out.print("ID: ");
-                    String id = scan.nextLine();
+                    String id;
+                    boolean validacionId;
 
                     // Validacion ID
+                    do {
+                        id = normalizarTexto(scan.nextLine());
+                        validacionId = true;
 
-                    if (id.length() != 8) {
-                        System.out.println("Debe tener exactamente 8 caracteres");
-                    }
-
-                    for (char c : id.toCharArray()) {
-                        if (!Character.isLetterOrDigit(c)) {
-                            System.out.println("Solo se permiten letras y números");
+                        if (id.length() != 8) {
+                            System.out.println("\nError: Debe tener exactamente 8 caracteres");
+                            validacionId = false;
+                        } else {
+                            for (char c : id.toCharArray()) {
+                                if (!Character.isLetterOrDigit(c)) {
+                                    System.out.println("\nError: Solo se permiten letras y números");
+                                    validacionId = false;
+                                    break;
+                                }
+                            }
                         }
-                    }
 
-                    // Normalizar
-                    nombre = normalizarTexto(nombre);
-                    especialidad = normalizarTexto(especialidad);
-                    id = normalizarTexto(id);
+                        if (!validacionId) {
+                            System.out.print("\nIngrese de nuevo el ID: ");
+                        }
+                    } while(!validacionId);
 
                     veterinarios.add(new Veterinario( nombre, especialidad, id));
+                    System.out.println("\n*****Registro agregado exitosamente*****");
 
                     return true;
                 }
@@ -203,12 +211,12 @@ public class Application {
                     boolean encontrado = false;
 
                     for (Veterinario v: veterinarios) {
-                        if (v.getId().equals(veterinarioAEditadar)) {
+                        if (v.getId().equalsIgnoreCase(veterinarioAEditadar)) {
                             System.out.println("Ingrese los nuevos datos");
                             System.out.print("Nombre: ");
-                            String nombreEditado = scan.nextLine();
+                            String nombreEditado = normalizarTexto(scan.nextLine());
                             System.out.print("Especialidad: ");
-                            String especialidadEditada = scan.nextLine();
+                            String especialidadEditada = normalizarTexto(scan.nextLine());
 
                             v.setNombre(nombreEditado);
                             v.setEspecialidad(especialidadEditada);
@@ -222,6 +230,8 @@ public class Application {
                             System.out.println("No se encontró un veterinario con ese ID");
                     }
 
+                    System.out.println("\n*****Registro agregado exitosamente*****");
+
                     return true;
                 }
             case 4 -> // Borrar
@@ -233,7 +243,7 @@ public class Application {
 
                     for (int i = 0; i < veterinarios.size(); i++) {
                         Veterinario veterinarioSeleccionado = veterinarios.get(i);
-                        if (veterinarioSeleccionado.getId().equals(veterinarioABorrar)) {
+                        if (veterinarioSeleccionado.getId().equalsIgnoreCase(veterinarioABorrar)) {
                             System.out.println("Vetrinario seleccionado: ");
                             System.out.println(veterinarioSeleccionado.toString());
                             System.out.print("Desea borrar este registro (Si/No): ");
@@ -241,9 +251,9 @@ public class Application {
 
                             if (borrar.equalsIgnoreCase("si")) {
                                 veterinarios.remove(i);
-                                System.out.println("Registro eliminado exitosamente.");
+                                System.out.println("*****Registro eliminado exitosamente*****");
                             } else {
-                                System.out.println("Operación cancelada.");
+                                System.out.println("*****Operación cancelada*****");
                             }
 
                             encontrado = true;
@@ -293,10 +303,12 @@ public class Application {
             case 2 -> // Agregar
                 {
                     System.out.print("Nombre medicamento: ");
-                    String nombreMedicamento = scan.nextLine();
+                    String nombreMedicamento = normalizarTexto(scan.nextLine());
                     System.out.print("Costo: ");
                     double costoMedicamento = scan.nextDouble();
                     medicamentos.add(new Medicamento(nombreMedicamento, costoMedicamento));
+                    
+                    System.out.println("\n*****Registro agregado exitosamente*****");
 
                     return true;
                 }
@@ -308,10 +320,10 @@ public class Application {
                     boolean encontrado = false;
 
                     for (Medicamento m : medicamentos) {
-                        if(m.getNombre().equals(medicamentoAEditar)) {
+                        if(m.getNombre().equalsIgnoreCase(medicamentoAEditar)) {
                             System.out.println("Ingrese los nuevos datos");
                             System.out.print("Nombre: ");
-                            String nombreEditado = scan.nextLine();
+                            String nombreEditado = normalizarTexto(scan.nextLine());
                             System.out.print("Costo: ");
                             double costoEditado = scan.nextDouble();
 
@@ -326,6 +338,8 @@ public class Application {
                     if (!encontrado) {
                         System.out.println("No se encontró un medicamento por ese nombre.");
                     }
+
+                    System.out.println("\n*****Registro agregado exitosamente*****");
 
                     return true;
                 }
@@ -347,9 +361,9 @@ public class Application {
 
                             if (borrar.equalsIgnoreCase(borrar)) {
                                 medicamentos.remove(i);
-                                System.out.println("Registro eliminado exitosamente.");
+                                System.out.println("*****Registro eliminado exitosamente*****");
                             } else {
-                                System.out.println("Operación cancelada.");
+                                System.out.println("*****Operación cancelada*****");
                             }
 
                             encontrado = true;
@@ -398,10 +412,12 @@ public class Application {
             case 2 -> // Agregar
                 {
                     System.out.print("Nombre examen: ");
-                    String nomEx = scan.nextLine();
+                    String nombre = normalizarTexto(scan.nextLine());
                     System.out.print("Costo: ");
-                    double costoEx = scan.nextDouble();
-                    examenes.add(new Examen(nomEx, costoEx));
+                    double costo = scan.nextDouble();
+
+                    examenes.add(new Examen(nombre, costo));
+                    System.out.println("\n*****Registro agregado exitosamente*****");
 
                     return true;
                 }
@@ -413,10 +429,10 @@ public class Application {
                     boolean encontrado = false;
 
                     for (Examen e : examenes) {
-                        if (e.getNombre().equals(examenAEditadar)) {
+                        if (e.getNombre().equalsIgnoreCase(examenAEditadar)) {
                             System.out.println("Ingrese los nuevos datos");
                             System.out.print("Nombre: ");
-                            String nombreEditado = scan.nextLine();
+                            String nombreEditado = normalizarTexto(scan.nextLine());
                             System.out.print("Costo: ");
                             double costoEditado = scan.nextDouble();
 
@@ -431,6 +447,9 @@ public class Application {
                     if (!encontrado) {
                         System.out.println("No se encontró un examen con ese nombre");
                     }
+
+                    System.out.println("\n*****Registro agregado exitosamente*****");
+
                     return true;
                 }
             case 4 -> //borrar
@@ -450,9 +469,9 @@ public class Application {
 
                             if (borrar.equalsIgnoreCase("si")) {
                                 examenes.remove(i);
-                                System.out.println("Registro eliminado exitosamente.");
+                                System.out.println("*****Registro eliminado exitosamente*****");
                             } else {
-                                System.out.println("Operación cancelada.");
+                                System.out.println("*****Operación cancelada*****");
                             }
 
                             encontrado = true;
@@ -571,13 +590,5 @@ public class Application {
             Normalizer.normalize(input, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toUpperCase();
 
         return textNormalizado;
-    }
-
-    static String validacionEntradasString(String input) {
-        if (input == null) {
-            return "Entrada no válida.";
-        } 
-
-        return input;
     }
 }
