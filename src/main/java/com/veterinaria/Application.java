@@ -3,10 +3,12 @@ package com.veterinaria;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -57,15 +59,15 @@ public class Application {
             while ((linea = br.readLine()) != null) {
                 String[] partesLineaTexto = linea.split(":");
                 switch (partesLineaTexto[0]) {
-                    case "Veterinario" -> veterinarios.add(new Veterinario(partesLineaTexto[1], partesLineaTexto[2], partesLineaTexto[3]));
+                    case "VETERINARIO" -> veterinarios.add(new Veterinario(partesLineaTexto[1], partesLineaTexto[2], partesLineaTexto[3]));
 
-                    case "Medicamento" -> medicamentos.add(new Medicamento(partesLineaTexto[1], Double.parseDouble(partesLineaTexto[2])));
+                    case "MEDICAMENTO" -> medicamentos.add(new Medicamento(partesLineaTexto[1], Double.parseDouble(partesLineaTexto[2])));
 
-                    case "Examen" -> examenes.add(new Examen(partesLineaTexto[1], Double.parseDouble(partesLineaTexto[2])));
+                    case "EXAMEN" -> examenes.add(new Examen(partesLineaTexto[1], Double.parseDouble(partesLineaTexto[2])));
 
-                    case "Propietario" -> propietarios.add(new Propietario(partesLineaTexto[1], partesLineaTexto[2], partesLineaTexto[3], partesLineaTexto[4], partesLineaTexto[5]));
+                    case "PROPIETARIO" -> propietarios.add(new Propietario(partesLineaTexto[1], partesLineaTexto[2], partesLineaTexto[3], partesLineaTexto[4], partesLineaTexto[5]));
                     
-                    case "Mascota" -> 
+                    case "MASCOTA" -> 
                         {
                             String especie = partesLineaTexto[2];
                             Propietario propietario = buscarPropietario(partesLineaTexto[8]);
@@ -107,43 +109,60 @@ public class Application {
     }
 
     static void administrarDatosPrincipales(Scanner scan) {
-        System.out.println("\n1. Administrar Veterinarios");
-        System.out.println("2. Administrar Medicamentos");
-        System.out.println("3. Administrar Examenes");
-        System.out.println("4. Volver");
-        int opcion = scan.nextInt(); scan.nextLine();
-        switch (opcion) {
-            case 1 -> administrarVeterinarios(scan);
-            case 2 -> administrarMedicamentos(scan);
-            case 3:
-                System.out.print("Nombre examen: ");
-                String nomEx = scan.nextLine();
-                System.out.print("Costo: ");
-                double costoEx = scan.nextDouble();
-                examenes.add(new Examen(nomEx, costoEx));
-                break;
-            default:
-                break;
-        }
+        int opcion;
+        boolean continuar;
+        do {
+            System.out.println("\n1. Administrar Veterinarios");
+            System.out.println("2. Administrar Medicamentos");
+            System.out.println("3. Administrar Exámenes");
+            System.out.println("4. Volver al menú principal");
+            System.out.print("Seleccione una opción: ");
+            opcion = scan.nextInt(); scan.nextLine();
+            switch (opcion) {
+                case 1 -> 
+                    {
+                        do {
+                            continuar = administrarVeterinarios(scan);
+                        } while(continuar);
+                    } 
+                case 2 -> 
+                    {
+                        do {
+                            continuar = administrarMedicamentos(scan);
+                        } while(continuar);
+                    }
+                case 3 -> 
+                    {
+                        do {
+                            continuar = administrarExamenes(scan);
+                        } while(continuar);
+                    }
+                case 4 -> System.out.println("Volviendo al menú principal...");
+                default -> System.out.println("Opción inválida");
+            }
+        } while (opcion != 4);
     }
 
-    static void administrarVeterinarios(Scanner scan) {
+    static boolean administrarVeterinarios(Scanner scan) {
 
-        System.out.println("\n1. Listar");
-        System.out.println("2. Agregar");
-        System.out.println("3. Editar");
-        System.out.println("4. Borrar");
-        System.out.println("5. Salir");
+        System.out.println("\nVeterinarios");
+        System.out.println("*****" + "1. Listar");
+        System.out.println("*****" + "2. Agregar");
+        System.out.println("*****" + "3. Editar");
+        System.out.println("*****" + "4. Borrar");
+        System.out.println("*****" + "5. Volver");
         System.out.print("Seleccione una opción: ");
         int opcion = scan.nextInt();
         scan.nextLine();
+        System.out.println(""); // Espacio antes de cada funcion
 
         switch (opcion) {
             case 1 -> // Listar
                 {
                     for (Veterinario v : veterinarios) {
-                        System.out.println("- " + v.toString());
+                        System.out.println("-> " + v.toString());
                     }
+                    return true;
                 }
             case 2 -> // Agregar
                 {
@@ -155,11 +174,30 @@ public class Application {
                     System.out.print("ID: ");
                     String id = scan.nextLine();
 
+                    // Validacion ID
+
+                    if (id.length() != 8) {
+                        System.out.println("Debe tener exactamente 8 caracteres");
+                    }
+
+                    for (char c : id.toCharArray()) {
+                        if (!Character.isLetterOrDigit(c)) {
+                            System.out.println("Solo se permiten letras y números");
+                        }
+                    }
+
+                    // Normalizar
+                    nombre = normalizarTexto(nombre);
+                    especialidad = normalizarTexto(especialidad);
+                    id = normalizarTexto(id);
+
                     veterinarios.add(new Veterinario( nombre, especialidad, id));
+
+                    return true;
                 }
             case 3 -> // Editar
                 {
-                    System.out.print("Ingrese el registro del vetrinario que desea editar: ");                    
+                    System.out.print("Ingrese el ID del vetrinario que desea editar: ");                    
                     String veterinarioAEditadar = scan.nextLine();
 
                     boolean encontrado = false;
@@ -169,7 +207,7 @@ public class Application {
                             System.out.println("Ingrese los nuevos datos");
                             System.out.print("Nombre: ");
                             String nombreEditado = scan.nextLine();
-                            System.out.print("Esspecialidad: ");
+                            System.out.print("Especialidad: ");
                             String especialidadEditada = scan.nextLine();
 
                             v.setNombre(nombreEditado);
@@ -178,11 +216,13 @@ public class Application {
                             encontrado = true;
                             break;
                         }
-
-                        if (!encontrado) {
-                            System.out.println("No se encontró un veterinario con ese id");
-                        }
                     }
+
+                    if (!encontrado) {
+                            System.out.println("No se encontró un veterinario con ese ID");
+                    }
+
+                    return true;
                 }
             case 4 -> // Borrar
                 {
@@ -210,26 +250,37 @@ public class Application {
                             break;
                         }
 
-                        if (!encontrado) {
-                            System.out.println("No se encontró un veterinario con ese id");
-                        }
+                        
                     }
-                    
+                    if (!encontrado) {
+                            System.out.println("No se encontró un veterinario con ese ID");
+                    }
+                    return true;                    
                 }
-            default -> System.out.println("Saliendo...");
+            case 5 -> 
+                {
+                    return false;
+                }
+            default -> 
+                {
+                    System.out.println("Opción no válida.");
+                    return true;
+                }
         }
     }
 
 
-    static void administrarMedicamentos(Scanner scan) {
-        System.out.println("\n1. Listar");
-        System.out.println("2. Agregar");
-        System.out.println("3. Editar");
-        System.out.println("4. Borrar");
-        System.out.println("5. Salir");
+    static boolean administrarMedicamentos(Scanner scan) {
+        System.out.println("\nMedicamentos");
+        System.out.println("*****" + "1. Listar");
+        System.out.println("*****" + "2. Agregar");
+        System.out.println("*****" + "3. Editar");
+        System.out.println("*****" + "4. Borrar");
+        System.out.println("*****" + "5. Volver");
         System.out.print("Seleccione una opción: ");
         int opcion = scan.nextInt();
         scan.nextLine();
+        System.out.println(""); // Espacio antes de cada funcion
 
         switch (opcion) {
             case 1 -> // Listar
@@ -237,6 +288,7 @@ public class Application {
                     for (Medicamento m: medicamentos) {
                         System.out.println("-> " + m.toString());
                     }
+                    return true;
                 }
             case 2 -> // Agregar
                 {
@@ -245,10 +297,12 @@ public class Application {
                     System.out.print("Costo: ");
                     double costoMedicamento = scan.nextDouble();
                     medicamentos.add(new Medicamento(nombreMedicamento, costoMedicamento));
+
+                    return true;
                 }
             case 3 -> // Editar
                 {
-                    System.out.print("Ingrese el medicamento que desea editar: ");
+                    System.out.print("Ingrese el nombre del medicamento que desea editar: ");
                     String medicamentoAEditar = scan.nextLine();
 
                     boolean encontrado = false;
@@ -272,6 +326,8 @@ public class Application {
                     if (!encontrado) {
                         System.out.println("No se encontró un medicamento por ese nombre.");
                     }
+
+                    return true;
                 }
             case 4 -> // Borrar
                 {
@@ -299,25 +355,36 @@ public class Application {
                             encontrado = true;
                             break;
                         }
-
-                        if (!encontrado) {
-                            System.out.println("No se encontró un medicamento por ese nombre.");
-                        }
                     }
+
+                    if (!encontrado) {
+                        System.out.println("No se encontró un medicamento por ese nombre.");
+                    }
+                    return true;
                 }
-            default -> System.out.println("Saliendo...");
+            case 5 -> 
+                {
+                    return false;
+                }
+            default -> 
+                {
+                    System.out.println("Opción no válida.");
+                    return true;
+                }
         }
     }
 
-    static void administrarExamenes(Scanner scan) {
-        System.out.println("\n1. Listar");
-        System.out.println("2. Agregar");
-        System.out.println("3. Editar");
-        System.out.println("4. Borrar");
-        System.out.println("5. Salir");
+    static boolean administrarExamenes(Scanner scan) {
+        System.out.println("\nExámenes");
+        System.out.println("*****" + "1. Listar");
+        System.out.println("*****" + "2. Agregar");
+        System.out.println("*****" + "3. Editar");
+        System.out.println("*****" + "4. Borrar");
+        System.out.println("*****" + "5. Volver");
         System.out.print("Seleccione una opción: ");
         int opcion = scan.nextInt();
         scan.nextLine();
+        System.out.println(""); // Espacio antes de cada funcion
 
         switch (opcion) {
             case 1 -> // Listar
@@ -325,6 +392,8 @@ public class Application {
                     for (Examen e : examenes) {
                         System.out.println("-> " + e.toString());
                     }
+
+                    return true;
                 }
             case 2 -> // Agregar
                 {
@@ -333,6 +402,8 @@ public class Application {
                     System.out.print("Costo: ");
                     double costoEx = scan.nextDouble();
                     examenes.add(new Examen(nomEx, costoEx));
+
+                    return true;
                 }
             case 3 -> // Editar
                 {
@@ -355,11 +426,12 @@ public class Application {
                             encontrado = true;
                             break;
                         }
-
-                        if (!encontrado) {
-                            System.out.println("No se encontró un examen con ese nombre");
-                        }
                     }
+
+                    if (!encontrado) {
+                        System.out.println("No se encontró un examen con ese nombre");
+                    }
+                    return true;
                 }
             case 4 -> //borrar
                 {
@@ -386,16 +458,25 @@ public class Application {
                             encontrado = true;
                             break;
                         }
-
-                        if (!encontrado) {
-                            System.out.println("No se encontró un examen con ese nombre");
-                        }
                     }
+
+                    if (!encontrado) {
+                        System.out.println("No se encontró un examen con ese nombre");
+                    }
+                    return true;
                 }
-            default -> System.out.println("Saliendo...");
+            
+            case 5 -> 
+                {
+                    return false;
+                }
+            default -> 
+                {
+                    System.out.println("Opción no válida.");
+                    return true;
+                }
         } 
     }
-
 
     static void administrarConsulta(Scanner scan) {
         System.out.print("Nombre del veterinario: ");
@@ -483,5 +564,20 @@ public class Application {
         System.out.println("\nPaciente más recurrente:");
         String masRec = Collections.max(mascotaFrecuencia.entrySet(), Map.Entry.comparingByValue()).getKey();
         System.out.println(masRec + " - " + mascotaFrecuencia.get(masRec) + " visitas");
+    }
+
+    static String normalizarTexto(String input) {
+        String textNormalizado = (input == null) ? null : 
+            Normalizer.normalize(input, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toUpperCase();
+
+        return textNormalizado;
+    }
+
+    static String validacionEntradasString(String input) {
+        if (input == null) {
+            return "Entrada no válida.";
+        } 
+
+        return input;
     }
 }
