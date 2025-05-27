@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -108,7 +107,7 @@ public class Application {
         return null;
     }
 
-    static void administrarDatosPrincipales(Scanner scan) {
+    static void administrarDatosPrincipales(Scanner scan) { 
         int opcion;
         boolean continuar;
         do {
@@ -471,7 +470,7 @@ public class Application {
                                 examenes.remove(i);
                                 System.out.println("*****Registro eliminado exitosamente*****");
                             } else {
-                                System.out.println("*****Operación cancelada*****");
+                                System.out.println("Operación cancelada.");
                             }
 
                             encontrado = true;
