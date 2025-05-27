@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -225,4 +224,66 @@ public class Application {
         String masRec = Collections.max(mascotaFrecuencia.entrySet(), Map.Entry.comparingByValue()).getKey();
         System.out.println(masRec + " - " + mascotaFrecuencia.get(masRec) + " visitas");
     }
+
+    static void generarReportes2() {
+    int totalMascotas = consultas.size();
+    int perros = 0, gatos = 0;
+    
+    Map<String, Integer> consultasPorVet = new HashMap<>();
+    Map<String, Integer> medicamentoContador = new HashMap<>();
+    Map<String, Integer> mascotaFrecuencia = new HashMap<>();
+
+    for (Consulta c : consultas) {
+        String especie = c.getMascota().getEspecie();
+        if (especie != null) {
+            if (especie.equalsIgnoreCase("Perro")) perros++;
+            else if (especie.equalsIgnoreCase("Gato")) gatos++;
+        }
+
+        String vet = c.getVeterinario().getNombre();
+        consultasPorVet.put(vet, consultasPorVet.getOrDefault(vet, 0) + 1);
+
+        String nombreMascota = c.getMascota().getNombre();
+        mascotaFrecuencia.put(nombreMascota, 
+            mascotaFrecuencia.getOrDefault(nombreMascota, 0) + 1);
+
+        if (c.getTratamiento() != null && c.getTratamiento().getMedicamentos() != null) {
+            for (Medicamento m : c.getTratamiento().getMedicamentos()) {
+                medicamentoContador.put(
+                    m.getNombre(), 
+                    medicamentoContador.getOrDefault(m.getNombre(), 0) + 1
+                );
+            }
+        }
+    }
+
+    System.out.println("=== Reporte de Consultas ===");
+    System.out.println("Mascotas atendidas: " + totalMascotas);
+
+    if (totalMascotas > 0) {
+        System.out.printf("Perros: %.2f%%\n", perros * 100.0 / totalMascotas);
+        System.out.printf("Gatos: %.2f%%\n", gatos * 100.0 / totalMascotas);
+    }
+
+    System.out.println("\nConsultas por veterinario:");
+    consultasPorVet.forEach((vet, count) -> 
+        System.out.println(vet + ": " + count)
+    );
+
+    if (!medicamentoContador.isEmpty()) {
+        String medMas = Collections.max(medicamentoContador.entrySet(), Map.Entry.comparingByValue()).getKey();
+        System.out.println("\nMedicamento más suministrado:");
+        System.out.println(medMas + " - " + medicamentoContador.get(medMas) + " veces");
+    } else {
+        System.out.println("\nNo se registraron medicamentos.");
+    }
+
+    if (!mascotaFrecuencia.isEmpty()) {
+        String masRec = Collections.max(mascotaFrecuencia.entrySet(), Map.Entry.comparingByValue()).getKey();
+        System.out.println("\nPaciente más recurrente:");
+        System.out.println(masRec + " - " + mascotaFrecuencia.get(masRec) + " visitas");
+    } else {
+        System.out.println("\nNo se registraron pacientes.");
+    }
+}
 }
