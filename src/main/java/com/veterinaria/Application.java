@@ -46,7 +46,7 @@ public class Application {
                     System.out.println("Saliendo del sistema...");
                     break;
                 default:
-                    System.out.println("Opción inválida");
+                    System.out.println("*****Opción no válida*****");
             }
         } while (opcion != 4);
         scan.close();
@@ -136,8 +136,9 @@ public class Application {
                             continuar = administrarExamenes(scan);
                         } while(continuar);
                     }
-                case 4 -> System.out.println("Volviendo al menú principal...");
-                default -> System.out.println("Opción inválida");
+                case 4 -> System.out.println("\nVolviendo al menú principal...");
+                default -> System.out.println("\n*****Opción no válida*****");
+
             }
         } while (opcion != 4);
     }
@@ -165,7 +166,7 @@ public class Application {
                 }
             case 2 -> // Agregar
                 {
-                    System.out.print("Escriba los datos del veterinario ");
+                    System.out.println("Escriba los datos del veterinario ");
                     System.out.print("Nombre: ");
                     String nombre = normalizarTexto(scan.nextLine());
                     System.out.print("Especialidad: ");
@@ -220,16 +221,16 @@ public class Application {
                             v.setNombre(nombreEditado);
                             v.setEspecialidad(especialidadEditada);
 
+                            System.out.println("\n*****Registro agregado exitosamente*****");
+
                             encontrado = true;
                             break;
                         }
                     }
 
                     if (!encontrado) {
-                            System.out.println("No se encontró un veterinario con ese ID");
+                            System.out.println("\n*****No se encontró un veterinario con ese ID*****");
                     }
-
-                    System.out.println("\n*****Registro agregado exitosamente*****");
 
                     return true;
                 }
@@ -244,15 +245,15 @@ public class Application {
                         Veterinario veterinarioSeleccionado = veterinarios.get(i);
                         if (veterinarioSeleccionado.getId().equalsIgnoreCase(veterinarioABorrar)) {
                             System.out.println("Vetrinario seleccionado: ");
-                            System.out.println(veterinarioSeleccionado.toString());
+                            System.out.println("-> " + veterinarioSeleccionado.toString());
                             System.out.print("Desea borrar este registro (Si/No): ");
                             String borrar = scan.nextLine();
 
                             if (borrar.equalsIgnoreCase("si")) {
                                 veterinarios.remove(i);
-                                System.out.println("*****Registro eliminado exitosamente*****");
+                                System.out.println("\n*****Registro eliminado exitosamente*****");
                             } else {
-                                System.out.println("*****Operación cancelada*****");
+                                System.out.println("\n*****Operación cancelada*****");
                             }
 
                             encontrado = true;
@@ -262,7 +263,7 @@ public class Application {
                         
                     }
                     if (!encontrado) {
-                            System.out.println("No se encontró un veterinario con ese ID");
+                            System.out.println("\n*****No se encontró un veterinario con ese ID*****");
                     }
                     return true;                    
                 }
@@ -272,7 +273,7 @@ public class Application {
                 }
             default -> 
                 {
-                    System.out.println("Opción no válida.");
+                    System.out.println("\n*****Opción no válida*****");
                     return true;
                 }
         }
@@ -329,16 +330,16 @@ public class Application {
                             m.setNombre(nombreEditado);
                             m.setCosto(costoEditado);
 
+                            System.out.println("\n*****Registro agregado exitosamente*****");
+
                             encontrado = true;
                             break;
                         }
                     }
 
                     if (!encontrado) {
-                        System.out.println("No se encontró un medicamento por ese nombre.");
+                        System.out.println("\n*****No se encontró un medicamento por ese nombre*****");
                     }
-
-                    System.out.println("\n*****Registro agregado exitosamente*****");
 
                     return true;
                 }
@@ -354,7 +355,7 @@ public class Application {
 
                         if (medicamentoSeleccionado.getNombre().equalsIgnoreCase(medicamentoABorrar)) {
                             System.out.print("Medicamento seleccionado: ");
-                            System.out.println(medicamentoSeleccionado.toString());
+                            System.out.println("-> " + medicamentoSeleccionado.toString());
                             System.out.print("Desea borrar este registro (Si/No): ");
                             String borrar = scan.nextLine();
 
@@ -371,7 +372,7 @@ public class Application {
                     }
 
                     if (!encontrado) {
-                        System.out.println("No se encontró un medicamento por ese nombre.");
+                        System.out.println("\n*****No se encontró un medicamento por ese nombre*****");
                     }
                     return true;
                 }
@@ -381,7 +382,7 @@ public class Application {
                 }
             default -> 
                 {
-                    System.out.println("Opción no válida.");
+                    System.out.println("\n*****Opción no válida*****");
                     return true;
                 }
         }
@@ -438,16 +439,17 @@ public class Application {
                             e.setNombre(nombreEditado);
                             e.setCosto(costoEditado);
 
+                            System.out.println("\n*****Registro agregado exitosamente*****");
+
                             encontrado = true;
                             break;
                         }
                     }
 
                     if (!encontrado) {
-                        System.out.println("No se encontró un examen con ese nombre");
+                        System.out.println("\n*****No se encontró un examen con ese nombre*****");
                     }
 
-                    System.out.println("\n*****Registro agregado exitosamente*****");
 
                     return true;
                 }
@@ -460,17 +462,17 @@ public class Application {
 
                     for (int i = 0; i < examenes.size(); i++) {
                         Examen examenSeleccionado = examenes.get(i);
-                        if (examenSeleccionado.getNombre().equals(examenABorrar)) {
+                        if (examenSeleccionado.getNombre().equalsIgnoreCase(examenABorrar)) {
                             System.out.println("Examen seleccionado: ");
-                            System.out.println(examenSeleccionado.toString());
+                            System.out.println("-> " + examenSeleccionado.toString());
                             System.out.print("Desea borrar este registro (Si/No): ");
                             String borrar = scan.nextLine();
 
                             if (borrar.equalsIgnoreCase("si")) {
                                 examenes.remove(i);
-                                System.out.println("*****Registro eliminado exitosamente*****");
+                                System.out.println("\n*****Registro eliminado exitosamente*****");
                             } else {
-                                System.out.println("Operación cancelada.");
+                                System.out.println("\n*****Operación cancelada*****");
                             }
 
                             encontrado = true;
@@ -479,7 +481,7 @@ public class Application {
                     }
 
                     if (!encontrado) {
-                        System.out.println("No se encontró un examen con ese nombre");
+                        System.out.println("\n*****No se encontró un examen con ese nombre*****");
                     }
                     return true;
                 }
@@ -490,7 +492,7 @@ public class Application {
                 }
             default -> 
                 {
-                    System.out.println("Opción no válida.");
+                    System.out.println("\n*****Opción no válida*****");
                     return true;
                 }
         } 
