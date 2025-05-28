@@ -224,66 +224,54 @@ public class Application {
         String masRec = Collections.max(mascotaFrecuencia.entrySet(), Map.Entry.comparingByValue()).getKey();
         System.out.println(masRec + " - " + mascotaFrecuencia.get(masRec) + " visitas");
     }
+    public class TestReportes {
+        public static void main(String[] args) {
+            // Veterinarios
+            Veterinario v1 = new Veterinario("Dr. Pérez", "123", "Cirujano");
+            Veterinario v2 = new Veterinario("Dra. Gómez", "456", "General");
 
-    static void generarReportes2() {
-    int totalMascotas = consultas.size();
-    int perros = 0, gatos = 0;
-    
-    Map<String, Integer> consultasPorVet = new HashMap<>();
-    Map<String, Integer> medicamentoContador = new HashMap<>();
-    Map<String, Integer> mascotaFrecuencia = new HashMap<>();
+            // Propietarios
+            Propietario p1 = new Propietario("P01", "Juan", "López", "987654321", "Av. Siempre Viva 123");
 
-    for (Consulta c : consultas) {
-        String especie = c.getMascota().getEspecie();
-        if (especie != null) {
-            if (especie.equalsIgnoreCase("Perro")) perros++;
-            else if (especie.equalsIgnoreCase("Gato")) gatos++;
+            // Mascotas
+            Mascota m1 = new Perro("Firulais", "Canino", 5, "Macho", 20.0, 50.0, p1, "Labrador");
+            Mascota m2 = new Gato("Michi", "Felino", 3, "Hembra", 4.5, 25.0, p1, true);
+
+            // Medicamentos
+            Medicamento med1 = new Medicamento("Vacuna Rabia", 15.0);
+            Medicamento med2 = new Medicamento("Desparasitante", 10.0);
+
+            // Examenes
+            Examen ex1 = new Examen("Sangre", 30.0);
+
+            // Simular consultas
+            Consulta c1 = new Consulta(v1, m1, new Date());
+            c1.agregarDiagnostico(new Diagnostico("Gripe", new Date()));
+            c1.agregarExamen(ex1);
+            Tratamiento t1 = new Tratamiento();
+            t1.agregarMedicamento(med1, new Dosis("12h", "2 dosis"));
+            c1.agregarTratamiento(t1);
+
+            Consulta c2 = new Consulta(v2, m2, new Date());
+            c2.agregarDiagnostico(new Diagnostico("Parásitos", new Date()));
+            Tratamiento t2 = new Tratamiento();
+            t2.agregarMedicamento(med2, new Dosis("24h", "1 dosis"));
+            c2.agregarTratamiento(t2);
+
+            // Cargar datos en listas estáticas
+            Application.veterinarios.add(v1);
+            Application.veterinarios.add(v2);
+            Application.propietarios.add(p1);
+            Application.mascotas.add(m1);
+            Application.mascotas.add(m2);
+            Application.medicamentos.add(med1);
+            Application.medicamentos.add(med2);
+            Application.examenes.add(ex1);
+            Application.consultas.add(c1);
+            Application.consultas.add(c2);
+
+            // Ejecutar el reporte
+            Application.generarReportes();
         }
-
-        String vet = c.getVeterinario().getNombre();
-        consultasPorVet.put(vet, consultasPorVet.getOrDefault(vet, 0) + 1);
-
-        String nombreMascota = c.getMascota().getNombre();
-        mascotaFrecuencia.put(nombreMascota, 
-            mascotaFrecuencia.getOrDefault(nombreMascota, 0) + 1);
-
-        if (c.getTratamiento() != null && c.getTratamiento().getMedicamentos() != null) {
-            for (Medicamento m : c.getTratamiento().getMedicamentos()) {
-                medicamentoContador.put(
-                    m.getNombre(), 
-                    medicamentoContador.getOrDefault(m.getNombre(), 0) + 1
-                );
-            }
-        }
     }
-
-    System.out.println("=== Reporte de Consultas ===");
-    System.out.println("Mascotas atendidas: " + totalMascotas);
-
-    if (totalMascotas > 0) {
-        System.out.printf("Perros: %.2f%%\n", perros * 100.0 / totalMascotas);
-        System.out.printf("Gatos: %.2f%%\n", gatos * 100.0 / totalMascotas);
-    }
-
-    System.out.println("\nConsultas por veterinario:");
-    consultasPorVet.forEach((vet, count) -> 
-        System.out.println(vet + ": " + count)
-    );
-
-    if (!medicamentoContador.isEmpty()) {
-        String medMas = Collections.max(medicamentoContador.entrySet(), Map.Entry.comparingByValue()).getKey();
-        System.out.println("\nMedicamento más suministrado:");
-        System.out.println(medMas + " - " + medicamentoContador.get(medMas) + " veces");
-    } else {
-        System.out.println("\nNo se registraron medicamentos.");
-    }
-
-    if (!mascotaFrecuencia.isEmpty()) {
-        String masRec = Collections.max(mascotaFrecuencia.entrySet(), Map.Entry.comparingByValue()).getKey();
-        System.out.println("\nPaciente más recurrente:");
-        System.out.println(masRec + " - " + mascotaFrecuencia.get(masRec) + " visitas");
-    } else {
-        System.out.println("\nNo se registraron pacientes.");
-    }
-}
 }
