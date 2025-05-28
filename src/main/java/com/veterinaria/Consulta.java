@@ -100,4 +100,13 @@ public class Consulta {
         }
         return total;
     }
+<<<<<<< HEAD
+=======
+
+    @Override
+    public String toString() {
+        return "Consulta -> veterinario=" + veterinario + ", mascota=" + mascota.toString() + ", diagnostico=" + diagnostico
+                + ", examenes=" + examenes + ", tratamiento=" + tratamiento + ", fecha=" + fecha;
+    }
+>>>>>>> main
 }
