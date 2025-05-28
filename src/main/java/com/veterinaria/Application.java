@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -772,102 +771,87 @@ public class Application {
     }
 
     static void generarReportes() {
-        int totalMascotas = consultas.size();
-        int perros = 0, gatos = 0;
-        Map<String, Integer> consultasPorVet = new HashMap<>();
-        Map<String, Integer> medicamentoContador = new HashMap<>();
-        Map<String, Integer> mascotaFrecuencia = new HashMap<>();
+        // 1. Datos básicos
+        int totalConsultas = consultas.size();
+        System.out.println("\n=== REPORTES ESTADÍSTICOS ===");
+        System.out.println("Total de consultas realizadas: " + totalConsultas);
 
+        if (totalConsultas == 0) {
+            System.out.println("\nNo hay consultas registradas para generar reportes.");
+            return;
+        }
+
+        // 2. Mascotas atendidas por tipo
+        Map<String, Integer> mascotasPorTipo = new HashMap<>();
         for (Consulta c : consultas) {
-            if (c.getMascota().especie.equalsIgnoreCase("Perro")) perros++;
-            if (c.getMascota().especie.equalsIgnoreCase("Gato")) gatos++;
-            String vet = c.getVeterinario().getNombre();
-            consultasPorVet.put(vet, consultasPorVet.getOrDefault(vet, 0) + 1);
-            String nombreMascota = c.getMascota().getNombre();
-            mascotaFrecuencia.put(nombreMascota, mascotaFrecuencia.getOrDefault(nombreMascota, 0) + 1);
+            String tipo = c.getMascota().especie;
+            mascotasPorTipo.put(tipo, mascotasPorTipo.getOrDefault(tipo, 0) + 1);
+        }
+
+        System.out.println("\n--- Mascotas atendidas por tipo ---");
+        mascotasPorTipo.forEach((tipo, cantidad) -> 
+            System.out.printf("- %s: %d (%.1f%%)%n", 
+                tipo, cantidad, (cantidad * 100.0 / totalConsultas)));
+
+        // 3. Consultas por veterinario
+        Map<String, Integer> consultasPorVeterinario = new HashMap<>();
+        for (Consulta c : consultas) {
+            String veterinario = c.getVeterinario().getNombre();
+            consultasPorVeterinario.put(veterinario, 
+                consultasPorVeterinario.getOrDefault(veterinario, 0) + 1);
+        }
+
+        System.out.println("\n--- Consultas por veterinario ---");
+        consultasPorVeterinario.entrySet().stream()
+            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+            .forEach(entry -> System.out.printf("- %s: %d consultas%n", 
+                entry.getKey(), entry.getValue()));
+
+        // 4. Medicamentos más suministrados
+        Map<String, Integer> medicamentosSuministrados = new HashMap<>();
+        for (Consulta c : consultas) {
             if (c.getTratamiento() != null) {
                 for (Medicamento m : c.getTratamiento().getMedicamentos()) {
-                    medicamentoContador.put(m.getNombre(), medicamentoContador.getOrDefault(m.getNombre(), 0) + 1);
+                    medicamentosSuministrados.put(m.getNombre(), 
+                        medicamentosSuministrados.getOrDefault(m.getNombre(), 0) + 1);
                 }
             }
         }
 
-        System.out.println("Mascotas atendidas: " + totalMascotas);
-        if (totalMascotas > 0) {
-            System.out.println("Perros: " + (perros * 100 / totalMascotas) + "%");
-            System.out.println("Gatos: " + (gatos * 100 / totalMascotas) + "%");
+        System.out.println("\n--- Medicamentos más suministrados ---");
+        if (!medicamentosSuministrados.isEmpty()) {
+            medicamentosSuministrados.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(5) // Muestra solo los top 5
+                .forEach(entry -> System.out.printf("- %s: %d veces%n", 
+                    entry.getKey(), entry.getValue()));
+        } else {
+            System.out.println("No se registraron medicamentos suministrados.");
         }
 
-        System.out.println("\nConsultas por veterinario:");
-        for (String vet : consultasPorVet.keySet()) {
-            System.out.println(vet + ": " + consultasPorVet.get(vet));
+        // 5. Mascota más recurrente
+        Map<String, Integer> visitasPorMascota = new HashMap<>();
+        for (Consulta c : consultas) {
+            String mascota = c.getMascota().getNombre() + " (" + c.getMascota().especie + ")";
+            visitasPorMascota.put(mascota, 
+                visitasPorMascota.getOrDefault(mascota, 0) + 1);
         }
 
-        System.out.println("\nMedicamento más suministrado:");
-        String medMas = Collections.max(medicamentoContador.entrySet(), Map.Entry.comparingByValue()).getKey();
-        System.out.println(medMas + " - " + medicamentoContador.get(medMas) + " veces");
-
-        System.out.println("\nPaciente más recurrente:");
-        String masRec = Collections.max(mascotaFrecuencia.entrySet(), Map.Entry.comparingByValue()).getKey();
-        System.out.println(masRec + " - " + mascotaFrecuencia.get(masRec) + " visitas");
+        System.out.println("\n--- Mascotas más recurrentes ---");
+        if (!visitasPorMascota.isEmpty()) {
+            visitasPorMascota.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(3) // Muestra solo las top 3
+                .forEach(entry -> System.out.printf("- %s: %d visitas%n", 
+                    entry.getKey(), entry.getValue()));
+        } else {
+            System.out.println("No hay datos de mascotas recurrentes.");
+        }
     }
-<<<<<<< HEAD
-    public class TestReportes {
-        public static void main(String[] args) {
-            // Veterinarios
-            Veterinario v1 = new Veterinario("Dr. Pérez", "123", "Cirujano");
-            Veterinario v2 = new Veterinario("Dra. Gómez", "456", "General");
-
-            // Propietarios
-            Propietario p1 = new Propietario("P01", "Juan", "López", "987654321", "Av. Siempre Viva 123");
-
-            // Mascotas
-            Mascota m1 = new Perro("Firulais", "Canino", 5, "Macho", 20.0, 50.0, p1, "Labrador");
-            Mascota m2 = new Gato("Michi", "Felino", 3, "Hembra", 4.5, 25.0, p1, true);
-
-            // Medicamentos
-            Medicamento med1 = new Medicamento("Vacuna Rabia", 15.0);
-            Medicamento med2 = new Medicamento("Desparasitante", 10.0);
-
-            // Examenes
-            Examen ex1 = new Examen("Sangre", 30.0);
-
-            // Simular consultas
-            Consulta c1 = new Consulta(v1, m1, new Date());
-            c1.agregarDiagnostico(new Diagnostico("Gripe", new Date()));
-            c1.agregarExamen(ex1);
-            Tratamiento t1 = new Tratamiento();
-            t1.agregarMedicamento(med1, new Dosis("12h", "2 dosis"));
-            c1.agregarTratamiento(t1);
-
-            Consulta c2 = new Consulta(v2, m2, new Date());
-            c2.agregarDiagnostico(new Diagnostico("Parásitos", new Date()));
-            Tratamiento t2 = new Tratamiento();
-            t2.agregarMedicamento(med2, new Dosis("24h", "1 dosis"));
-            c2.agregarTratamiento(t2);
-
-            // Cargar datos en listas estáticas
-            Application.veterinarios.add(v1);
-            Application.veterinarios.add(v2);
-            Application.propietarios.add(p1);
-            Application.mascotas.add(m1);
-            Application.mascotas.add(m2);
-            Application.medicamentos.add(med1);
-            Application.medicamentos.add(med2);
-            Application.examenes.add(ex1);
-            Application.consultas.add(c1);
-            Application.consultas.add(c2);
-
-            // Ejecutar el reporte
-            Application.generarReportes();
-        }
-=======
-
     static String normalizarTexto(String input) {
         String textNormalizado = (input == null) ? null : 
             Normalizer.normalize(input, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toUpperCase();
 
         return textNormalizado;
->>>>>>> main
     }
 }
