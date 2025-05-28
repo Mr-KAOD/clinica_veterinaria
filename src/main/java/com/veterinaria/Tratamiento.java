@@ -42,5 +42,9 @@ public class Tratamiento {
         this.duracionDias = duracionDias;
     }
 
+    @Override
+    public String toString() {
+        return "Tratamiento [medicamentos=" + medicamentos + ", dosis=" + dosis + ", duracionDias=" + duracionDias + "]";
+    }
 
 }

@@ -103,7 +103,7 @@ public class Consulta {
 
     @Override
     public String toString() {
-        return "Consulta -> veterinario=" + veterinario + ", mascota=" + mascota + ", diagnostico=" + diagnostico
+        return "Consulta -> veterinario=" + veterinario + ", mascota=" + mascota.toString() + ", diagnostico=" + diagnostico
                 + ", examenes=" + examenes + ", tratamiento=" + tratamiento + ", fecha=" + fecha;
     }
 }

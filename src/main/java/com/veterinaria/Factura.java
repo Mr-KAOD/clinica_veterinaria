@@ -13,6 +13,6 @@ public class Factura {
 
     @Override
     public String toString() {
-        return "Factura consulta=" + consulta + "]";
+        return "Factura consulta=" + consulta;
     }
 }

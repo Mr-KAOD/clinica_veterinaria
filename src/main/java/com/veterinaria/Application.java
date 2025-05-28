@@ -532,19 +532,15 @@ public class Application {
         for (Veterinario v: veterinarios) {
             System.out.println("-> " + v.toString());
         }
-        System.out.print("\nIngrese el nombre del veterinario: ");
+        System.out.print("\nIngrese el nombre del veterinario encargado: ");
         Veterinario veterinario = buscarVeterinario(normalizarTexto(scan.nextLine()));
 
-        System.out.println("\nEspecie de la mascota: ");
-        System.out.println("1. Perro");
-        System.out.println("2. Gato");
-        System.out.print("Seleccione una opción: ");
         Mascota mascota = agregarMascota(scan);
 
         Consulta consulta = new Consulta(veterinario, mascota, new Date());
 
         System.out.print("\nIngrese diagnóstico: ");
-        String diag = scan.nextLine();
+        String diag = normalizarTexto(scan.nextLine());
         consulta.agregarDiagnostico(new Diagnostico(diag, new Date()));
 
         consultas.add(consulta);
@@ -563,8 +559,11 @@ public class Application {
             // Mostrar consultas disponibles
             System.out.println("\nConsultas disponibles:");
             for (int i = 0; i < consultas.size(); i++) {
-                System.out.println((i + 1) + ". " + consultas.get(i).toString());
+                //System.out.println((i + 1) + ". " + consultas.get(i).toString());
+                System.out.println("Consulta");
+                System.out.println(((i + 1) + ". " + consultas.get(i).getVeterinario() + " " + consultas.get(i).getMascota()));
             }
+
             System.out.print("Seleccione consulta: ");
             int consultaIndex = scan.nextInt(); scan.nextLine();
             Consulta consulta = consultas.get(consultaIndex - 1);
@@ -576,7 +575,7 @@ public class Application {
             System.out.print("Seleccione examen: ");
             int examenSeleccionado = scan.nextInt(); scan.nextLine();
             consulta.agregarExamen(examenes.get(examenSeleccionado - 1));
-            System.out.println("Examen agregado correctamente.");
+            System.out.println("\nExamen agregado correctamente.");
         }
     }
 
@@ -611,10 +610,12 @@ public class Application {
                 String cant = scan.nextLine();
                 t.agregarMedicamento(medicamentos.get(medSel - 1), new Dosis(frec, cant));
                 System.out.print("¿Agregar otro? (si/no): ");
-                if (!scan.nextLine().equalsIgnoreCase("si")) break;
+                if (!scan.nextLine().equalsIgnoreCase("si")) {
+                    break;
+                }
             }
             consulta.agregarTratamiento(t);
-            System.out.println("*****Tratamiento agregado correctamente*****");
+            System.out.println("\n*****Tratamiento agregado correctamente*****");
         }
     }
 
@@ -627,9 +628,11 @@ public class Application {
         System.out.println("\nConsultas disponibles:");
         for (int i = 0; i < consultas.size(); i++) {
             System.out.println((i + 1) + ". " + consultas.get(i).toString());
+            System.out.println();
         }
         System.out.print("Seleccione consulta: ");
-        int consultaIndex = scan.nextInt(); scan.nextLine();
+        int consultaIndex = scan.nextInt(); 
+        scan.nextLine();
         Consulta consulta = consultas.get(consultaIndex - 1);
         
         Factura factura = new Factura(consulta);
@@ -638,6 +641,10 @@ public class Application {
     }
 
     static Mascota agregarMascota(Scanner scan) {
+        System.out.println("\nEspecie de la mascota: ");
+        System.out.println("1. Perro");
+        System.out.println("2. Gato");
+        System.out.print("Seleccione una opción: ");
         String opcion = normalizarTexto(scan.nextLine().trim());
         Mascota mascotaCreada = null;
 
