@@ -10,4 +10,9 @@ public class Factura {
     public double getTotal() {
         return consulta.calcularCostoTotal();
     }
+
+    @Override
+    public String toString() {
+        return "Factura consulta=" + consulta + "]";
+    }
 }

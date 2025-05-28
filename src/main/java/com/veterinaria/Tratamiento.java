@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tratamiento {
-    private List<Medicamento> medicamentos;
-    private List<Dosis> dosis;
+    private ArrayList<Medicamento> medicamentos;
+    private ArrayList<Dosis> dosis;
     private int duracionDias;
 
     public Tratamiento() {
@@ -18,7 +18,29 @@ public class Tratamiento {
         this.dosis.add(dosis);
     }
 
-    public List<Medicamento> getMedicamentos() {
+    public ArrayList<Medicamento> getMedicamentos() {
         return medicamentos;
     }
+
+    public void setMedicamentos(ArrayList<Medicamento> medicamentos) {
+        this.medicamentos = medicamentos;
+    }
+
+    public ArrayList<Dosis> getDosis() {
+        return dosis;
+    }
+
+    public void setDosis(ArrayList<Dosis> dosis) {
+        this.dosis = dosis;
+    }
+
+    public int getDuracionDias() {
+        return duracionDias;
+    }
+
+    public void setDuracionDias(int duracionDias) {
+        this.duracionDias = duracionDias;
+    }
+
+
 }

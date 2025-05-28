@@ -499,31 +499,107 @@ public class Application {
     }
 
     static void administrarConsulta(Scanner scan) {
-        System.out.print("Nombre del veterinario: ");
-        Veterinario vet = buscarVeterinario(scan.nextLine());
-        System.out.print("Nombre de la mascota: ");
-        Mascota mas = buscarMascota(scan.nextLine());
-        Consulta consulta = new Consulta(vet, mas, new Date());
+        int opcion;
+        do {
+            System.out.println("\n1. Agregar consulta");
+            System.out.println("2. Agregar examen a consulta");
+            System.out.println("3. Agregar tratamiento a consulta");
+            System.out.println("4. Ver factura consulta");
+            System.out.println("5. Volver al menú principal");
+            System.out.print("Seleccione una opción: ");
+            opcion = scan.nextInt(); 
+            scan.nextLine();
 
-        System.out.print("Ingrese diagnóstico: ");
+            switch (opcion) {
+                case 1 -> agregarConsulta(scan);
+                case 2 -> agregarExamen(scan);
+                case 3 -> agregarTratamiento(scan);
+                case 4 -> verFacturaConsulta(scan);
+                case 5 -> System.out.println("\nVolviendo al menú principal...");
+                default -> System.out.println("\n*****Opción no válida*****");
+            }
+
+            if (opcion != 5) {
+                System.out.println("\nPresione Enter para continuar...");
+                scan.nextLine();
+            }
+        } while (opcion != 4);
+
+    }
+
+    static void agregarConsulta(Scanner scan) {
+        System.out.println("\nVeterinarios disponibles:");
+        for (Veterinario v: veterinarios) {
+            System.out.println("-> " + v.toString());
+        }
+        System.out.print("\nIngrese el nombre del veterinario: ");
+        Veterinario veterinario = buscarVeterinario(normalizarTexto(scan.nextLine()));
+
+        System.out.println("\nEspecie de la mascota: ");
+        System.out.println("1. Perro");
+        System.out.println("2. Gato");
+        System.out.print("Seleccione una opción: ");
+        Mascota mascota = agregarMascota(scan);
+
+        Consulta consulta = new Consulta(veterinario, mascota, new Date());
+
+        System.out.print("\nIngrese diagnóstico: ");
         String diag = scan.nextLine();
         consulta.agregarDiagnostico(new Diagnostico(diag, new Date()));
 
-        System.out.print("¿Agregar exámenes? (si/no): ");
+        consultas.add(consulta);
+        Factura factura = new Factura(consulta);
+        System.out.println("Costo total consulta: " + factura.getTotal());
+    }
+
+    static void agregarExamen(Scanner scan) {
+        if (consultas.isEmpty()) {
+            System.out.println("\nNo hay consultas registradas. Primero agregue una consulta.");
+            return;
+        }
+        
+        System.out.print("\n¿Agregar exámenes? (si/no): ");
         if (scan.nextLine().equalsIgnoreCase("si")) {
+            // Mostrar consultas disponibles
+            System.out.println("\nConsultas disponibles:");
+            for (int i = 0; i < consultas.size(); i++) {
+                System.out.println((i + 1) + ". " + consultas.get(i).toString());
+            }
+            System.out.print("Seleccione consulta: ");
+            int consultaIndex = scan.nextInt(); scan.nextLine();
+            Consulta consulta = consultas.get(consultaIndex - 1);
+            
+            System.out.println("\nExámenes disponibles:");
             for (int i = 0; i < examenes.size(); i++) {
-                System.out.println((i + 1) + ". " + examenes.get(i).getCosto());
+                System.out.println((i + 1) + ". " + examenes.get(i).getNombre() + " - $" + examenes.get(i).getCosto());
             }
             System.out.print("Seleccione examen: ");
-            int exSel = scan.nextInt(); scan.nextLine();
-            consulta.agregarExamen(examenes.get(exSel - 1));
+            int examenSeleccionado = scan.nextInt(); scan.nextLine();
+            consulta.agregarExamen(examenes.get(examenSeleccionado - 1));
+            System.out.println("Examen agregado correctamente.");
         }
+    }
 
-        System.out.print("¿Agregar tratamiento? (si/no): ");
+    static void agregarTratamiento(Scanner scan) {
+        if (consultas.isEmpty()) {
+            System.out.println("\nNo hay consultas registradas. Primero agregue una consulta.");
+            return;
+        }
+        
+        System.out.print("\n¿Agregar tratamiento? (si/no): ");
         if (scan.nextLine().equalsIgnoreCase("si")) {
+            // Mostrar consultas disponibles
+            System.out.println("\nConsultas disponibles:");
+            for (int i = 0; i < consultas.size(); i++) {
+                System.out.println((i + 1) + ". " + consultas.get(i).toString());
+            }
+            System.out.print("\nSeleccione consulta: ");
+            int consultaIndex = scan.nextInt(); scan.nextLine();
+            Consulta consulta = consultas.get(consultaIndex - 1);
+            
             Tratamiento t = new Tratamiento();
             while (true) {
-                System.out.println("Lista de medicamentos:");
+                System.out.println("\nLista de medicamentos:");
                 for (int i = 0; i < medicamentos.size(); i++) {
                     System.out.println((i + 1) + ". " + medicamentos.get(i).getNombre());
                 }
@@ -538,11 +614,154 @@ public class Application {
                 if (!scan.nextLine().equalsIgnoreCase("si")) break;
             }
             consulta.agregarTratamiento(t);
+            System.out.println("*****Tratamiento agregado correctamente*****");
         }
+    }
 
-        consultas.add(consulta);
+    static void verFacturaConsulta(Scanner scan) {
+        if (consultas.isEmpty()) {
+            System.out.println("\nNo hay consultas registradas.");
+            return;
+        }
+        
+        System.out.println("\nConsultas disponibles:");
+        for (int i = 0; i < consultas.size(); i++) {
+            System.out.println((i + 1) + ". " + consultas.get(i).toString());
+        }
+        System.out.print("Seleccione consulta: ");
+        int consultaIndex = scan.nextInt(); scan.nextLine();
+        Consulta consulta = consultas.get(consultaIndex - 1);
+        
         Factura factura = new Factura(consulta);
-        System.out.println("Costo total consulta: " + factura.getTotal());
+        System.out.println("\n=== DETALLE DE FACTURA ===");
+        System.out.println(factura.toString());
+    }
+
+    static Mascota agregarMascota(Scanner scan) {
+        String opcion = normalizarTexto(scan.nextLine().trim());
+        Mascota mascotaCreada = null;
+
+        switch (opcion) {
+            case "1" -> {
+                System.out.println("\nIngrese los siguientes datos de la mascota");
+                System.out.print("Nombre: ");
+                String nombreMascota = normalizarTexto(scan.nextLine());
+                System.out.print("Raza: ");
+                String razaMascota = normalizarTexto(scan.nextLine());
+                System.out.print("Edad: ");
+                int edadMascota = scan.nextInt(); scan.nextLine();
+                System.out.print("Genero (Macho/Hembra): ");
+                String generoMascota = normalizarTexto(scan.nextLine());
+                System.out.print("Peso (Kg): ");
+                double pesoMascota = scan.nextDouble(); scan.nextLine();
+                System.out.print("Altura (cm): ");
+                double alturaMascota = scan.nextDouble(); scan.nextLine();
+                System.out.print("Última fecha de vacunación DD-MM-AAAA: ");
+                String fechaUtlimaVacunacionMascota = normalizarTexto(scan.nextLine());
+
+                // Datos propietario
+                System.out.println("\nIngrese los siguientes datos del propietario");
+                System.out.print("Nombre: ");
+                String nombrePropietario = normalizarTexto(scan.nextLine());
+                System.out.print("ID: ");
+                String idPropietario;
+                boolean validacionId;
+
+                // Validacion ID
+                do {
+                    idPropietario = normalizarTexto(scan.nextLine());
+                    validacionId = true;
+
+                    for (char c : idPropietario.toCharArray()) {
+                        if (!Character.isDigit(c)) {
+                            System.out.println("\nError: Solo se permiten números");
+                            validacionId = false;
+                            break;
+                        }
+                    }
+
+                    if (!validacionId) {
+                        System.out.print("\nIngrese de nuevo el ID: ");
+                    }
+                } while(!validacionId);
+
+                System.out.print("Dirección: ");
+                String direccionPropietario = normalizarTexto(scan.nextLine());
+                System.out.print("Correo: ");
+                String correoPropietario = normalizarTexto(scan.nextLine());
+                System.out.print("Teléfono: ");
+                String telefonoPropietario = normalizarTexto(scan.nextLine());
+
+                Propietario propietario = new Propietario(idPropietario, nombrePropietario, 
+                    direccionPropietario, correoPropietario, telefonoPropietario);
+                propietarios.add(propietario);
+                
+                mascotaCreada = new Perro(nombreMascota, razaMascota, edadMascota, generoMascota, 
+                    pesoMascota, alturaMascota, propietario, fechaUtlimaVacunacionMascota);
+                mascotas.add(mascotaCreada);
+            }
+            case "2" -> {
+                System.out.println("\nIngrese los siguientes datos de la mascota");
+                System.out.print("Nombre: ");
+                String nombreMascota = normalizarTexto(scan.nextLine());
+                System.out.print("Raza: ");
+                String razaMascota = normalizarTexto(scan.nextLine());
+                System.out.print("Edad: ");
+                int edadMascota = scan.nextInt(); scan.nextLine();
+                System.out.print("Genero (Macho/Hembra): ");
+                String generoMascota = normalizarTexto(scan.nextLine());
+                System.out.print("Peso (Kg): ");
+                double pesoMascota = scan.nextDouble(); scan.nextLine();
+                System.out.print("Altura (cm): ");
+                double alturaMascota = scan.nextDouble(); scan.nextLine();
+                System.out.print("Esterilizado (Si/No): ");
+                String estaEsterilizado = normalizarTexto(scan.nextLine());
+                boolean esterilizado = estaEsterilizado.equalsIgnoreCase("si");
+
+                // Datos propietario
+                System.out.println("\nIngrese los siguientes datos del propietario");
+                System.out.print("Nombre: ");
+                String nombrePropietario = normalizarTexto(scan.nextLine());
+                System.out.print("ID: ");
+                String idPropietario;
+                boolean validacionId;
+
+                // Validacion ID
+                do {
+                    idPropietario = normalizarTexto(scan.nextLine());
+                    validacionId = true;
+
+                    for (char c : idPropietario.toCharArray()) {
+                        if (!Character.isDigit(c)) {
+                            System.out.println("\nError: Solo se permiten números");
+                            validacionId = false;
+                            break;
+                        }
+                    }
+
+                    if (!validacionId) {
+                        System.out.print("\nIngrese de nuevo el ID: ");
+                    }
+                } while(!validacionId);
+
+                System.out.print("Dirección: ");
+                String direccionPropietario = normalizarTexto(scan.nextLine());
+                System.out.print("Correo: ");
+                String correoPropietario = normalizarTexto(scan.nextLine());
+                System.out.print("Teléfono: ");
+                String telefonoPropietario = normalizarTexto(scan.nextLine());
+
+                Propietario propietario = new Propietario(idPropietario, nombrePropietario, 
+                    direccionPropietario, correoPropietario, telefonoPropietario);
+                propietarios.add(propietario);
+                
+                mascotaCreada = new Gato(nombreMascota, razaMascota, edadMascota, generoMascota, 
+                    pesoMascota, alturaMascota, propietario, esterilizado);
+                mascotas.add(mascotaCreada);
+            }
+            default -> System.out.println("\n*****Opción no válida*****");
+        }
+        return mascotaCreada;
     }
 
     static void generarReportes() {
