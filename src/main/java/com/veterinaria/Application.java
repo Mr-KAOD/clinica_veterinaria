@@ -205,38 +205,93 @@ public class Application {
                 }
             case 3 -> // Editar
                 {
-                    System.out.print("Ingrese el ID del vetrinario que desea editar: ");                    
-                    String veterinarioAEditadar = scan.nextLine();
+                    System.out.println("Seleccione un veterinario: ");                    
+                    for (int i = 0; i < veterinarios.size(); i++) {
+                        System.out.println((i + 1) + ". " + veterinarios.get(i).getNombre());
+                    }
+                    System.out.print("Seleccione la opcion: ");
+                    int veterinarioAEditadar = scan.nextInt();
+                    scan.nextLine();
 
-                    boolean encontrado = false;
+                    //veterinarios.set(veterinarioAEditadar, );
 
-                    for (Veterinario v: veterinarios) {
-                        if (v.getId().equalsIgnoreCase(veterinarioAEditadar)) {
+                    for (int j = 0; j < veterinarios.size(); j++) {
+
+                        if ((j + 1) == veterinarioAEditadar) {
+
                             System.out.println("Ingrese los nuevos datos");
                             System.out.print("Nombre: ");
                             String nombreEditado = normalizarTexto(scan.nextLine());
                             System.out.print("Especialidad: ");
                             String especialidadEditada = normalizarTexto(scan.nextLine());
 
-                            v.setNombre(nombreEditado);
-                            v.setEspecialidad(especialidadEditada);
+                            veterinarios.get(j).setNombre(nombreEditado);
+                            veterinarios.get(j).setEspecialidad(especialidadEditada);
 
-                            System.out.println("\n*****Registro agregado exitosamente*****");
+                        } 
+                    }
 
-                            encontrado = true;
-                            break;
-                        }
+                    System.out.println("\n*****Registro agregado exitosamente*****");
+
+                    /*boolean encontrado = false;
+
+                    for (Veterinario v: veterinarios) {
+                        System.out.println("Ingrese los nuevos datos");
+                        System.out.print("Nombre: ");
+                        String nombreEditado = normalizarTexto(scan.nextLine());
+                        System.out.print("Especialidad: ");
+                        String especialidadEditada = normalizarTexto(scan.nextLine());
+
+                        v.setNombre(nombreEditado);
+                        v.setEspecialidad(especialidadEditada);
+
+                        System.out.println("\n*****Registro agregado exitosamente*****");
+
+                        encontrado = true;
+                        break;
                     }
 
                     if (!encontrado) {
                             System.out.println("\n*****No se encontró un veterinario con ese ID*****");
-                    }
+                    }*/
 
                     return true;
                 }
             case 4 -> // Borrar
                 {
-                    System.out.print("Ingrese el ID del vetrinario que desea borrar: ");                    
+                    System.out.println("Seleccione un veterinario para borrar: ");                    
+                    for (int i = 0; i < veterinarios.size(); i++) {
+                        System.out.println((i + 1) + ". " + veterinarios.get(i).getNombre());
+                    }
+                    System.out.print("Seleccione la opcion: ");
+                    int veterinarioABorrar = scan.nextInt();
+                    scan.nextLine();
+
+                    //veterinarios.set(veterinarioAEditadar, );
+
+                    for (int j = 0; j < veterinarios.size(); j++) {
+
+                        if ((j + 1) == veterinarioABorrar) {
+
+                            System.out.println("Vetrinario seleccionado: ");
+                            //System.out.println("-> " + veterinarioSeleccionado.toString());
+                            System.out.print("Desea borrar este registro (Si/No): ");
+                            String borrar = scan.nextLine();
+
+                            if (borrar.equalsIgnoreCase("si")) {
+                                veterinarios.remove(j);
+                                System.out.println("\n*****Registro eliminado exitosamente*****");
+                            } else {
+                                System.out.println("\n*****Operación cancelada*****");
+                            }
+                            break;
+
+                        } 
+                    }
+
+                    System.out.println("\n*****Registro agregado exitosamente*****");
+                    
+                    /*System.out.print("Ingrese el ID del vetrinario que desea borrar: ");                    
                     String veterinarioABorrar = scan.nextLine();
 
                     boolean encontrado = false;
@@ -259,12 +314,11 @@ public class Application {
                             encontrado = true;
                             break;
                         }
-
                         
                     }
                     if (!encontrado) {
                             System.out.println("\n*****No se encontró un veterinario con ese ID*****");
-                    }
+                    }*/
                     return true;                    
                 }
             case 5 -> 
